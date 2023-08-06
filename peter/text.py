@@ -1,6 +1,6 @@
 import cv2
  
-img = cv2.imread('test.jpeg', cv2.IMREAD_COLOR)
+img = cv2.imread('./couple.jpg')
  
 cartoon_img = cv2.stylization(img, sigma_s=100, sigma_r=0.9)  
  
