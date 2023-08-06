@@ -1,12 +1,15 @@
 import cv2
- 
-img = cv2.imread('./couple.jpg')
- 
-cartoon_img = cv2.stylization(img, sigma_s=100, sigma_r=0.9)  
- 
-cv2.imshow('original', img)
-cv2.imshow('cartoon', cartoon_img)  
-cv2.waitKey(0)  
-cv2.destroyAllWindows() 
- 
-cv2.imwrite('cartoon_test.jpg', cartoon_img)
+import numpy as np
+
+
+
+img_path = '/Users/ahnwooseok/Downloads/github/2023-Konkuk-Univ-Graduation-Project/peter/happy_couple.jpg'
+
+
+image = cv2.imread(img_path)
+
+
+
+for i in [0.1, 0.7, 0.75, 0.8, 0.85 ,0.9, 0.95]:
+    stylized_image = cv2.stylization(image, sigma_s=100, sigma_r=i)
+    cv2.imwrite(f'stylized_couple1_{i}.jpg', stylized_image)
