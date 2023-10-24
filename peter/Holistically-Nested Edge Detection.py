@@ -1,6 +1,6 @@
 
 import cv2
-img = cv2.imread("/Users/ahnwooseok/Downloads/github/2023-Konkuk-Univ-Graduation-Project/peter/happy_couple.jpg")
+img = cv2.imread("/Users/ahnwooseok/Downloads/github/2023-Konkuk-Univ-Graduation-Project/peter/AdobeStock_94274587_welsh_corgi_pembroke_CD.jpg")
 (H, W) = img.shape[:2]
 blob = cv2.dnn.blobFromImage(img, scalefactor=1.0, size=(W, H),
     swapRB=False, crop=False)
