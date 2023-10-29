@@ -13,7 +13,9 @@ svclassifier = SVC(kernel='linear', degree=8)
 svclassifier.fit(X_train, y_train) 
 
 y_pred = svclassifier.predict(X_test)  
-print('score : ',svclassifier.score(X_test,y_test))
+# print('score : ',svclassifier.score(X_test,y_test))
 print(confusion_matrix(y_test, y_pred))  
 print(classification_report(y_test, y_pred)) 
+
+
 
