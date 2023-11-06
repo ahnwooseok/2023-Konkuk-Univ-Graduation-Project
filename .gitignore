@@ -5,3 +5,5 @@ log
 venv
 log.*
 *.ipynb
+.DS_Store
+*.json

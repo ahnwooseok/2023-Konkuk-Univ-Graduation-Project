@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import lib.router as router
 
 
 tags_metadata = [
@@ -11,14 +12,7 @@ tags_metadata = [
 
 
 app = FastAPI(title="jolp Server API", openapi_tags=tags_metadata)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,2
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app.include_router(router.router)
 
 
 
