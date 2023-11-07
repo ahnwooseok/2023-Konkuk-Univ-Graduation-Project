@@ -12,6 +12,8 @@ backcall==0.2.0
 beautifulsoup4==4.12.2
 bertopic==0.15.0
 bleach==4.1.0
+boto3==1.28.78
+botocore==1.31.78
 Brotli==1.0.9
 certifi==2023.7.22
 cffi==1.15.1
@@ -33,6 +35,7 @@ filelock==3.12.4
 fonttools==4.43.1
 fsspec==2023.10.0
 gensim==4.3.2
+h11==0.14.0
 hdbscan==0.8.33
 huggingface-hub==0.17.3
 idna==3.4
@@ -42,6 +45,7 @@ ipython-genutils==0.2.0
 ipywidgets==8.0.4
 jedi==0.18.1
 Jinja2==3.1.2
+jmespath==1.0.1
 joblib==1.2.0
 JPype1==1.4.1
 json5==0.9.6
@@ -103,6 +107,7 @@ pycparser==2.21
 pydantic==2.4.2
 pydantic_core==2.10.1
 Pygments==2.15.1
+PyMySQL==1.1.0
 pynndescent==0.5.10
 pyOpenSSL==23.2.0
 pyparsing==3.1.1
@@ -111,7 +116,9 @@ PyQt5-sip==12.11.0
 pyrsistent==0.18.0
 PySocks==1.7.1
 python-dateutil==2.8.2
+python-dotenv==1.0.0
 python-json-logger==2.0.7
+python-multipart==0.0.6
 pytz==2023.3.post1
 PyYAML==6.0.1
 pyzmq==23.2.0
@@ -121,6 +128,7 @@ regex==2023.10.3
 requests==2.31.0
 rfc3339-validator==0.1.4
 rfc3986-validator==0.1.1
+s3transfer==0.7.0
 safetensors==0.4.0
 scikit-learn==1.2.2
 scipy==1.11.3
@@ -155,6 +163,7 @@ typing_extensions==4.8.0
 tzdata==2023.3
 umap-learn==0.5.4
 urllib3==1.26.18
+uvicorn==0.24.0.post1
 wcwidth==0.2.5
 webencodings==0.5.1
 websocket-client==0.58.0
