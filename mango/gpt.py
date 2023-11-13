@@ -1,6 +1,10 @@
 import openai
+import os
+from dotenv import load_dotenv
 
-openai.api_key = "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"
+load_dotenv()
+OPEN_API_KEY = os.environ["gpt_api_key"]
+openai.api_key = OPEN_API_KEY
 messages = []
 content = "사과, 배, 참외, 피자 이 단어들의 공통점을 한 단어로 말해줘!"
 # content = input("User: ")
