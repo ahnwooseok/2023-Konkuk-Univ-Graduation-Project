@@ -59,7 +59,7 @@ async def upload_file(userId: Annotated[str, Form()], fileName: Annotated[str, F
         return {"code" : 500, "message" : "Internal Error"}
     
     
-@router.post("getFiles", tags=["getFile"])
+@router.post("/getFiles", tags=["getFile"])
 def get_files(body : RequestBody):
     """
     사용자의 파일들을 볼 수 있는 API임미다
@@ -76,7 +76,12 @@ def get_files(body : RequestBody):
         result = function.get_files(db, user_id)
         result = sorted(result, key=itemgetter('category_id'))
         grouped_result = groupby(result, itemgetter('category_id'))
+        logger.error(result)
+        all_file_list = [{"file_id" :_dict["file_id"], "file_name" : _dict["file_name"], "file_url" : _dict["file_url"]} for _dict in result]
+        
+        
         data = list()
+        
         for key, group_data in grouped_result:
             group_data = list(group_data)
             category_id = key
@@ -85,9 +90,19 @@ def get_files(body : RequestBody):
             for _dict in group_data:
                 file_list.append({"file_id" : _dict["file_id"] , "file_name" : _dict["file_name"], "file_url" : _dict["file_url"]})
             data.append({"category_id" : category_id, "category_name" : category_name, "file_list" : file_list})
-            
-        return {"code" : 200, "data" : data}
         
+        result_dict = {"all_file_list" : all_file_list, "category_list" : data}
+        return {"code" : 200, "data" : result_dict}
+        
+    except:
+        logger.error(traceback.format_exc())
+        return {"code" : 500, "message" : "Internal Error"}
+
+
+@router.post("/clusterFiles", tags=["clustering"])
+def cluster_files(body:RequestBody):
+    try:
+        pass
     except:
         logger.error(traceback.format_exc())
         return {"code" : 500, "message" : "Internal Error"}
