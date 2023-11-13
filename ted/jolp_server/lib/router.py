@@ -2,9 +2,8 @@ from fastapi import APIRouter, Form, UploadFile
 from itertools import groupby
 from operator import itemgetter
 from typing import Annotated
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
 import requests
-from bertopic.representation import OpenAI
 from lib import function
 from pydantic import BaseModel
 from app.logger import logger
@@ -14,10 +13,10 @@ from io import BytesIO
 import os
 import uuid
 import traceback
+import re
 from PyPDF2 import PdfReader
-from pprint import pprint
 from model.tokenizer import CustomTokenizer
-from model.representation_model import representation_model
+from model.representation_model import RepresentationModel
 
 
 from bertopic import BERTopic
@@ -121,7 +120,7 @@ def cluster_files(body:RequestBody):
         model = BERTopic(embedding_model="sentence-transformers/xlm-r-100langs-bert-base-nli-stsb-mean-tokens",
                             vectorizer_model=CountVectorizer(tokenizer=tokenizer, max_features=3000),                    
                             nr_topics= "auto",
-                            representation_model=representation_model,
+                            representation_model=RepresentationModel("gpt-3.5-turbo"),
                             top_n_words=5,                    
                             calculate_probabilities=True)
 
@@ -166,12 +165,21 @@ def cluster_files(body:RequestBody):
             if line and not line.replace(' ', '').isdecimal():
                 preprocessed_documents.append(line)
         
-        topics, probs = model.fit_transform(preprocessed_documents)
         
-        logger.error(topics)
-        logger.error(probs)
-        logger.error("----------------------")
-        logger.error(model.get_topic_info())
+        model.fit_transform(preprocessed_documents)
+        
+        topic_dict = model.topic_representations_
+        
+        for key in topic_dict.keys():
+            category_id = uuid.uuid4()
+            category_name = topic_dict[key][0][0]
+            
+            
+        
+        
+        
+        
+        
             
             
             
