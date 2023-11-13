@@ -4,20 +4,20 @@ from operator import itemgetter
 from typing import Annotated
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 import requests
-import docx
+from bertopic.representation import OpenAI
 from lib import function
 from pydantic import BaseModel
 from app.logger import logger
 from app.database import Database
 from app.s3 import S3
-from io import BytesIO, TextIOWrapper
+from io import BytesIO
 import os
 import uuid
 import traceback
 from PyPDF2 import PdfReader
 from pprint import pprint
 from model.tokenizer import CustomTokenizer
-import tqdm
+from model.representation_model import representation_model
 
 
 from bertopic import BERTopic
@@ -121,6 +121,7 @@ def cluster_files(body:RequestBody):
         model = BERTopic(embedding_model="sentence-transformers/xlm-r-100langs-bert-base-nli-stsb-mean-tokens",
                             vectorizer_model=CountVectorizer(tokenizer=tokenizer, max_features=3000),                    
                             nr_topics= "auto",
+                            representation_model=representation_model,
                             top_n_words=5,                    
                             calculate_probabilities=True)
 
@@ -160,8 +161,7 @@ def cluster_files(body:RequestBody):
             token_list = tokenizer(string)
             tokenized_string = " ".join(token_list)
 
-            string_list.append([tokenized_string[i:i+300] for i in range(0, len(tokenized_string), 300)])
-
+            string_list += ([tokenized_string[i:i+300] for i in range(0, len(tokenized_string), 300)])
         for line in string_list:
             if line and not line.replace(' ', '').isdecimal():
                 preprocessed_documents.append(line)
@@ -170,6 +170,8 @@ def cluster_files(body:RequestBody):
         
         logger.error(topics)
         logger.error(probs)
+        logger.error("----------------------")
+        logger.error(model.get_topic_info())
             
             
             
