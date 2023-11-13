@@ -2,16 +2,25 @@ from fastapi import APIRouter, Form, UploadFile
 from itertools import groupby
 from operator import itemgetter
 from typing import Annotated
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+import requests
+import docx
 from lib import function
 from pydantic import BaseModel
 from app.logger import logger
 from app.database import Database
 from app.s3 import S3
-from io import BytesIO
+from io import BytesIO, TextIOWrapper
 import os
 import uuid
 import traceback
 from PyPDF2 import PdfReader
+from pprint import pprint
+from model.tokenizer import CustomTokenizer
+import tqdm
+
+
+from bertopic import BERTopic
 
 router = APIRouter(prefix="/jolp")
 
@@ -70,6 +79,7 @@ def get_files(body : RequestBody):
         user_id = dict_body["userId"]
         db = Database()
         db.connect()
+        
     except:
         return {"code" : 500, "message" : "Internal Error"}
     
@@ -107,32 +117,59 @@ def cluster_files(body:RequestBody):
         user_id = dict_body["userId"]
         db = Database()
         db.connect()
+        tokenizer = CustomTokenizer()
+        model = BERTopic(embedding_model="sentence-transformers/xlm-r-100langs-bert-base-nli-stsb-mean-tokens",
+                            vectorizer_model=CountVectorizer(tokenizer=tokenizer, max_features=3000),                    
+                            nr_topics= "auto",
+                            top_n_words=5,                    
+                            calculate_probabilities=True)
+
     except:
         logger.error(traceback.format_exc())
         return {"code" : 500, "message" : "Internal Error"}
     
     try:
         result = function.get_files(db, user_id)
-        logger.error(result)
         string_list = list()
+        preprocessed_documents = list()
         for file in result:
+            string = ""
             file_url = file["file_url"]
             file_name = file["file_name"]
             file_name_list = os.path.splitext(file_name)
             extension = file_name_list[-1]
-            file_like = function.request_file_url(file_url)
+            
             if extension == ".pdf":
+                response_content = function.request_file_url(file_url)
+                file_like = BytesIO(response_content)
                 pdf = PdfReader(file_like)
                 for page in pdf.pages:
                     line = page.extract_text().split('\n')
-                    string_list.append(" ".join(line))
-                
+                    string+=(" ".join(line))
             elif extension == ".docx":
-                pass
-            elif extension == ".txt":
-                pass
+                continue
             
-            print(string_list)
+                # response_content = function.request_file_url(file_url)
+                print(file_url)
+                
+            elif extension == ".txt":
+                response = requests.get(file_url)
+                line = response.text.split('\n')
+                string+=(" ".join(line))
+                
+            token_list = tokenizer(string)
+            tokenized_string = " ".join(token_list)
+
+            string_list.append([tokenized_string[i:i+300] for i in range(0, len(tokenized_string), 300)])
+
+        for line in string_list:
+            if line and not line.replace(' ', '').isdecimal():
+                preprocessed_documents.append(line)
+        
+        topics, probs = model.fit_transform(preprocessed_documents)
+        
+        logger.error(topics)
+        logger.error(probs)
             
             
             

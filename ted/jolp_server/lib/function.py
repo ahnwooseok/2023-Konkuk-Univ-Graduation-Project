@@ -34,7 +34,6 @@ def get_files(db, user_id):
 
 def request_file_url(url):
     response = requests.get(url)
-    file_like = BytesIO(response.content)
-    return file_like
+    return response.content
     
     
