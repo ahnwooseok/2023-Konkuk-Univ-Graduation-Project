@@ -6,8 +6,7 @@ load_dotenv()
 OPEN_API_KEY = os.environ["gpt_api_key"]
 openai.api_key = OPEN_API_KEY
 messages = []
-content = "사과, 배, 참외, 피자 이 단어들의 공통점을 한 단어로 말해줘!"
-# content = input("User: ")
+content = "사과, 배, 참외, 피자 이 단어들의 공통점을 한 단어로 말해줘"
 messages.append({"role": "user", "content": content})
 
 completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=messages)
