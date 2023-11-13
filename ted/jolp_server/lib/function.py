@@ -1,5 +1,8 @@
 import PyPDF2
 import uuid
+import docx
+import requests
+from io import BytesIO
 
 
 def insert_file(db, user_id, file_id ,file_name, file_url):
@@ -28,3 +31,10 @@ def get_files(db, user_id):
     """
     result = db.execute_all(query)
     return result
+
+def request_file_url(url):
+    response = requests.get(url)
+    file_like = BytesIO(response.content)
+    return file_like
+    
+    

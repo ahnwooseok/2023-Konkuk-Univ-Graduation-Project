@@ -15,15 +15,17 @@ class CustomTokenizer:
         result = [word for word in word_tokens if len(word) > 1]
         return result
     
-custom_tokenizer = CustomTokenizer(Mecab())
-vectorizer = CountVectorizer(tokenizer=custom_tokenizer, max_features=3000)
 
 class BaseModel:
     def __init__(self):
         self.model = BERTopic(embedding_model="sentence-transformers/xlm-r-100langs-bert-base-nli-stsb-mean-tokens",
-                              vectorizer_model=vectorizer,                    
+                              vectorizer_model=CountVectorizer(tokenizer=CustomTokenizer(Mecab()), max_features=3000),                    
                               nr_topics= "auto",
                               top_n_words=5,                    
                               calculate_probabilities=True)
+        
+    def fit_transform(self, documents):
+        topics, probs = self.model.fit_transform(documents)
+        return topics, probs
     
 

@@ -11,6 +11,7 @@ from io import BytesIO
 import os
 import uuid
 import traceback
+from PyPDF2 import PdfReader
 
 router = APIRouter(prefix="/jolp")
 
@@ -102,7 +103,41 @@ def get_files(body : RequestBody):
 @router.post("/clusterFiles", tags=["clustering"])
 def cluster_files(body:RequestBody):
     try:
-        pass
+        dict_body = body.dict()
+        user_id = dict_body["userId"]
+        db = Database()
+        db.connect()
+    except:
+        logger.error(traceback.format_exc())
+        return {"code" : 500, "message" : "Internal Error"}
+    
+    try:
+        result = function.get_files(db, user_id)
+        logger.error(result)
+        string_list = list()
+        for file in result:
+            file_url = file["file_url"]
+            file_name = file["file_name"]
+            file_name_list = os.path.splitext(file_name)
+            extension = file_name_list[-1]
+            file_like = function.request_file_url(file_url)
+            if extension == ".pdf":
+                pdf = PdfReader(file_like)
+                for page in pdf.pages:
+                    line = page.extract_text().split('\n')
+                    string_list.append(" ".join(line))
+                
+            elif extension == ".docx":
+                pass
+            elif extension == ".txt":
+                pass
+            
+            print(string_list)
+            
+            
+            
+            
+    
     except:
         logger.error(traceback.format_exc())
         return {"code" : 500, "message" : "Internal Error"}
