@@ -68,7 +68,8 @@ def update_file(db, file_id, category_id):
     
 def delete_all_file(db):
     query = f"""
-    truncate tbl_file
+    DELETE
+    FROM tbl_file
     """
     db. execute(query)
     db.commit()
